@@ -336,7 +336,6 @@ static char UIViewKeyboardDelegate;
     } else {
         self.keyboardActiveView.hidden = NO;
     }
-    NSLog(@"DAKeyboardPanGestureChanged:");
     CGFloat keyboardViewHeight = self.keyboardActiveView.bounds.size.height;
     CGFloat keyboardWindowHeight = self.keyboardActiveView.window.bounds.size.height;
     CGPoint touchLocationInKeyboardWindow = [gesture locationInView:self.keyboardActiveView.window];
