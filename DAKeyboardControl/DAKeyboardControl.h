@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol DAKeyboardControlDelegate <NSObject>
+- (BOOL)shouldAllowKeyboardPanGestureForView:(UIView*)view;
+@end
+
 typedef void (^DAKeyboardDidMoveBlock)(CGRect keyboardFrameInView);
 
 /** DAKeyboardControl allows you to easily add keyboard awareness and scrolling
@@ -17,6 +21,8 @@ typedef void (^DAKeyboardDidMoveBlock)(CGRect keyboardFrameInView);
  */
 
 @interface UIView (DAKeyboardControl)
+
+@property (nonatomic, weak) id<DAKeyboardControlDelegate> keyboardControlDelegate;
 
 /** The keyboardTriggerOffset property allows you to choose at what point the
  user's finger "engages" the keyboard.
@@ -51,6 +57,9 @@ typedef void (^DAKeyboardDidMoveBlock)(CGRect keyboardFrameInView);
 
 /** Convenience method to dismiss the keyboard */
 - (void)hideKeyboard;
+
+- (UIPanGestureRecognizer *)keyboardPanRecognizer;
+
 
 @end
 

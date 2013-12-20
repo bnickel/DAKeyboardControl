@@ -21,6 +21,7 @@ static char UIViewKeyboardActiveView;
 static char UIViewKeyboardPanRecognizer;
 static char UIViewPreviousKeyboardRect;
 static char UIViewIsPanning;
+static char UIViewKeyboardDelegate;
 
 @interface UIView (DAKeyboardControl_Internal) <UIGestureRecognizerDelegate>
 
@@ -325,13 +326,17 @@ static char UIViewIsPanning;
 
 - (void)panGestureDidChange:(UIPanGestureRecognizer *)gesture
 {
+    if (self.keyboardControlDelegate && ![self.keyboardControlDelegate shouldAllowKeyboardPanGestureForView:self]) {
+        return;
+    }
+    
     if(!self.keyboardActiveView || !self.keyboardActiveInput || self.keyboardActiveView.hidden) {
         [self reAssignFirstResponder];
         return;
     } else {
         self.keyboardActiveView.hidden = NO;
     }
-    
+    NSLog(@"DAKeyboardPanGestureChanged:");
     CGFloat keyboardViewHeight = self.keyboardActiveView.bounds.size.height;
     CGFloat keyboardWindowHeight = self.keyboardActiveView.window.bounds.size.height;
     CGPoint touchLocationInKeyboardWindow = [gesture locationInView:self.keyboardActiveView.window];
@@ -523,6 +528,21 @@ static char UIViewIsPanning;
                              [NSNumber numberWithFloat:keyboardTriggerOffset],
                              OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [self didChangeValueForKey:@"keyboardTriggerOffset"];
+}
+
+- (void)setKeyboardControlDelegate:(id<DAKeyboardControlDelegate>)keyboardControlDelegate
+{
+    [self willChangeValueForKey:@"keyboardControlDelegate"];
+    objc_setAssociatedObject(self,
+                             &UIViewKeyboardDelegate,
+                             keyboardControlDelegate,
+                             OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self willChangeValueForKey:@"keyboardControlDelegate"];
+}
+
+- (id<DAKeyboardControlDelegate>)keyboardControlDelegate
+{
+    return objc_getAssociatedObject(self, &UIViewKeyboardDelegate);
 }
 
 - (BOOL)isPanning
