@@ -538,19 +538,22 @@ typedef id(^WeakAttachment)();
     [self didChangeValueForKey:@"keyboardTriggerOffset"];
 }
 
+- (id<DAKeyboardControlDelegate>)keyboardControlDelegate
+{
+    WeakAttachment attachment = objc_getAssociatedObject(self, &UIViewKeyboardDelegate);
+    return attachment ? attachment() : nil;
+}
+
 - (void)setKeyboardControlDelegate:(id<DAKeyboardControlDelegate>)keyboardControlDelegate
 {
+    __weak id<DAKeyboardControlDelegate> weakKeyboardControlDelegate = keyboardControlDelegate;
+    
     [self willChangeValueForKey:@"keyboardControlDelegate"];
     objc_setAssociatedObject(self,
                              &UIViewKeyboardDelegate,
-                             keyboardControlDelegate,
-                             OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                             ^id { return weakKeyboardControlDelegate; },
+                             OBJC_ASSOCIATION_COPY_NONATOMIC);
     [self willChangeValueForKey:@"keyboardControlDelegate"];
-}
-
-- (id<DAKeyboardControlDelegate>)keyboardControlDelegate
-{
-    return objc_getAssociatedObject(self, &UIViewKeyboardDelegate);
 }
 
 - (BOOL)isPanning
