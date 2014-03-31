@@ -389,6 +389,13 @@ static char UIViewKeyboardDelegate;
                 shouldRecede = YES;
             }
             
+            if ([self.keyboardControlDelegate respondsToSelector:@selector(shouldPreventRecedingKeyboardFromPanGesture:)]) {
+                if ([self.keyboardControlDelegate shouldPreventRecedingKeyboardFromPanGesture:gesture])
+                {
+                    shouldRecede = NO;
+                }
+            }
+            
             // If the keyboard has only been pushed down 44 pixels or has been
             // panned upwards let it pop back up; otherwise, let it drop down
             CGRect newKeyboardViewFrame = self.keyboardActiveView.frame;

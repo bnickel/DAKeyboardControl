@@ -10,6 +10,8 @@
 
 @protocol DAKeyboardControlDelegate <NSObject>
 - (BOOL)shouldAllowKeyboardPanGestureForView:(UIView*)view;
+@optional
+- (BOOL)shouldPreventRecedingKeyboardFromPanGesture:(UIPanGestureRecognizer*)panGesture;
 @end
 
 typedef void (^DAKeyboardDidMoveBlock)(CGRect keyboardFrameInView);
