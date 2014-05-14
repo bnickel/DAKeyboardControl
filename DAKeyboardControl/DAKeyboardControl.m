@@ -317,7 +317,18 @@ static char UIViewIsPanning;
 {
     if (gestureRecognizer == self.keyboardPanRecognizer) {
         // Don't allow panning if inside the active input (unless SELF is a UITextView and the receiving view)
-        return (![touch.view isFirstResponder] || ([self isKindOfClass:[UITextView class]] && [self isEqual:touch.view]));
+        if (![touch.view isFirstResponder] || ([self isKindOfClass:[UITextView class]] && [self isEqual:touch.view])) {
+            
+            // Don't allow panning if below the trigger offset.
+            CGFloat keyboardViewHeight = self.keyboardActiveView.bounds.size.height;
+            CGFloat keyboardWindowHeight = self.keyboardActiveView.window.bounds.size.height;
+            CGPoint touchLocationInKeyboardWindow = [touch locationInView:self.keyboardActiveView.window];
+            
+            return (touchLocationInKeyboardWindow.y < keyboardWindowHeight - keyboardViewHeight - self.keyboardTriggerOffset);
+        }
+        
+        return NO;
+        
     } else {
         return YES;
     }
